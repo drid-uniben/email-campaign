@@ -20,7 +20,8 @@ interface IAuthResponse {
 
 interface AuthenticatedRequest extends Request {
   user: {
-    userId: string;
+    _id: Types.ObjectId;
+    id: string;
     email?: string;
     role: string;
   };
@@ -157,7 +158,7 @@ class AuthController {
       const response: IAuthResponse = {
         success: true,
         user: {
-          id: user.userId, // userId is already a string from payload
+          id: user.id || user._id.toString(),
           role: user.role,
         },
       };

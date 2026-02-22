@@ -19,11 +19,11 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | Admin Portal",
+    template: "%s | Drid Admin Portal",
     default: "Email Campaign & Unit Management System",
   },
   description:
-    "Admin Portal for managing email campaigns and user units.",
+    "Drid Admin Portal for managing email campaigns and user units.",
   keywords: [
     "Admin",
     "Email Campaign",
@@ -33,9 +33,9 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Email Campaign & Unit Management System",
     description:
-      "Admin Portal for managing email campaigns and user units.",
+      "Drid Admin Portal for managing email campaigns and user units.",
     url: "https://your-domain.com", // Placeholder, update if a specific domain is known
-    siteName: "Admin Portal",
+    siteName: "Drid Admin Portal",
     type: "website",
   },
 };

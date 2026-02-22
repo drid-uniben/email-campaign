@@ -50,6 +50,7 @@ export default function AdminUsersPage() {
   const [unitFilter, setUnitFilter] = useState("all");
   const [approvalFilter, setApprovalFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
 
   // Modals
   const [showAddUserModal, setShowAddUserModal] = useState(false);
@@ -64,15 +65,23 @@ export default function AdminUsersPage() {
   const [bulkInput, setBulkInput] = useState("");
   const [rejectionReason, setRejectionReason] = useState("");
 
+  // Debounce search term
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
   const fetchUsers = async () => {
     setIsLoading(true);
     try {
       const response = await userApi.getUsers({
         unitId: unitFilter !== "all" ? unitFilter : undefined,
         isApproved: approvalFilter !== "all" ? approvalFilter : undefined,
-        search: searchTerm || undefined,
+        search: debouncedSearchTerm || undefined,
       });
-      setUsers(response.data.data);
+      setUsers(response.data);
     } catch (error) {
       toast.error("Failed to load users");
     } finally {
@@ -89,12 +98,19 @@ export default function AdminUsersPage() {
     }
   };
 
+  // Initial load and unit fetch
   useEffect(() => {
     if (isAuthenticated) {
       fetchUnits();
+    }
+  }, [isAuthenticated]);
+
+  // Fetch users when filters or debounced search changes
+  useEffect(() => {
+    if (isAuthenticated) {
       fetchUsers();
     }
-  }, [isAuthenticated, unitFilter, approvalFilter, searchTerm]);
+  }, [isAuthenticated, unitFilter, approvalFilter, debouncedSearchTerm]);
 
   const resetForm = () => {
     setName("");
@@ -151,7 +167,7 @@ export default function AdminUsersPage() {
     setIsSubmitting(true);
     try {
       await userApi.updateStatus(userId, {
-        unitId: newUnitId === "unassigned" ? undefined : newUnitId,
+        unitId: newUnitId,
       });
       toast.success("User unit updated successfully");
       fetchUsers();
@@ -166,7 +182,7 @@ export default function AdminUsersPage() {
     if (!selectedUser) return;
     setIsSubmitting(true);
     try {
-      await userApi.delete(selectedUser.id);
+      await userApi.delete(selectedUser._id);
       toast.success("User deleted successfully");
       setShowDeleteUserModal(false);
       fetchUsers();
@@ -178,13 +194,16 @@ export default function AdminUsersPage() {
   };
 
   const filteredUsers = useMemo(() => {
+    if (!Array.isArray(users)) return [];
     return users.filter(user => {
-      if (searchTerm && !user.name.toLowerCase().includes(searchTerm.toLowerCase()) && !user.email.toLowerCase().includes(searchTerm.toLowerCase())) {
+      if (debouncedSearchTerm && 
+          !user.name?.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) && 
+          !user.email?.toLowerCase().includes(debouncedSearchTerm.toLowerCase())) {
         return false;
       }
       return true;
     });
-  }, [users, searchTerm]);
+  }, [users, debouncedSearchTerm]);
 
 
   return (
@@ -302,7 +321,7 @@ export default function AdminUsersPage() {
                       </tr>
                     ) : (
                       filteredUsers.map((user) => (
-                        <tr key={user.id}>
+                        <tr key={user._id}>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                             {user.name}
                           </td>
@@ -312,7 +331,7 @@ export default function AdminUsersPage() {
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                             <select
                               value={user.unit?._id || "unassigned"}
-                              onChange={(e) => handleAssignUnit(user.id, e.target.value)}
+                              onChange={(e) => handleAssignUnit(user._id, e.target.value)}
                               className="block w-full py-1 px-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-journal-maroon focus:border-journal-maroon sm:text-sm"
                               disabled={isSubmitting}
                             >
@@ -339,7 +358,7 @@ export default function AdminUsersPage() {
                                   variant="ghost"
                                   size="sm"
                                   title="Approve User"
-                                  onClick={() => handleUpdateStatus(user.id, true)}
+                                  onClick={() => handleUpdateStatus(user._id, true)}
                                   disabled={isSubmitting}
                                   className="text-green-600 hover:bg-green-50 hover:text-green-700"
                                 >
@@ -351,7 +370,7 @@ export default function AdminUsersPage() {
                                   variant="ghost"
                                   size="sm"
                                   title="Mark as Pending"
-                                  onClick={() => handleUpdateStatus(user.id, false)}
+                                  onClick={() => handleUpdateStatus(user._id, false)}
                                   disabled={isSubmitting}
                                   className="text-yellow-600 hover:bg-yellow-50 hover:text-yellow-700"
                                 >
@@ -385,7 +404,7 @@ export default function AdminUsersPage() {
 
         {/* Add User Modal */}
         <Dialog open={showAddUserModal} onOpenChange={setShowAddUserModal}>
-          <DialogContent className="sm:max-w-[600px]">
+          <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle className="text-2xl font-bold flex items-center gap-2">
                 <BadgePlus className="h-6 w-6 text-journal-maroon" />

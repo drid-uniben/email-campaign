@@ -206,7 +206,7 @@ export function withAdminAuth<P extends object>(
     useEffect(() => {
       if (!isInitialLoading) {
         if (!user) {
-          router.push('/admin/login');
+          router.push('/login');
         } else if (user.role !== 'admin') {
           router.push('/');
         }

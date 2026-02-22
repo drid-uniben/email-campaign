@@ -120,7 +120,7 @@ function AdminLayoutComponent({ children }: AdminLayoutProps) {
               />
             </div>
             <div>
-              <span className="text-base text-white font-bold">Admin Portal</span>
+              <span className="text-base text-white font-bold">Drid Admin Portal</span>
             </div>
           </div>
           <Button

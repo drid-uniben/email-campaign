@@ -92,7 +92,7 @@ export default function AdminLoginPage() {
               </div>
               <div>
                 <h1 className="text-xl font-bold text-journal-maroon tracking-tight">
-                  Admin Portal
+                  Drid Admin Portal
                 </h1>
                 <p className="text-sm text-gray-600">Email Campaign & Unit Management</p>
               </div>
@@ -207,7 +207,7 @@ export default function AdminLoginPage() {
       <footer className="bg-white border-t border-gray-200 py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-center text-sm text-gray-600">
-            © {new Date().getFullYear()} Admin Portal. All rights reserved.
+            © {new Date().getFullYear()} Drid Admin Portal. All rights reserved.
           </p>
         </div>
       </footer>

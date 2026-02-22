@@ -1,10 +1,10 @@
 "use client";
 
 import dynamic from 'next/dynamic';
-import 'quill/dist/quill.snow.css'; // Common CSS for Quill
+import 'react-quill-new/dist/quill.snow.css'; // Common CSS for Quill
 
 // Dynamically import ReactQuill to ensure it only runs on the client-side
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
+const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
 
 interface RichTextEditorProps {
   value: string;

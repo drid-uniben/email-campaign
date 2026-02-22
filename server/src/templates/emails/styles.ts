@@ -55,5 +55,5 @@ body {
 
 export const commonFooter = `
 <div class="footer">
-    <p>© ${new Date().getFullYear()} Admin Portal. All rights reserved.</p>
+    <p>© ${new Date().getFullYear()} Drid Admin Portal. All rights reserved.</p>
 </div>`;

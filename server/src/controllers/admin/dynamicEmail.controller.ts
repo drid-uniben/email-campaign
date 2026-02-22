@@ -105,12 +105,16 @@ class DynamicEmailController {
       }
 
       const firstRecipientId = ids[0];
-      
+
       if (!firstRecipientId.match(/^[0-9a-fA-F]{24}$/)) {
-        throw new BadRequestError(`Invalid recipient ID format: ${firstRecipientId}`);
+        throw new BadRequestError(
+          `Invalid recipient ID format: ${firstRecipientId}`
+        );
       }
 
-      const user = await User.findById(firstRecipientId).populate('unit', 'name').lean();
+      const user = await User.findById(firstRecipientId)
+        .populate('unit', 'name')
+        .lean();
 
       if (!user) {
         throw new BadRequestError('Recipient not found');
@@ -182,7 +186,9 @@ class DynamicEmailController {
 
       const users = await User.find({
         _id: { $in: ids },
-      }).populate('unit', 'name').lean();
+      })
+        .populate('unit', 'name')
+        .lean();
 
       const results = {
         sent: 0,
@@ -321,7 +327,7 @@ class DynamicEmailController {
     ${bodyContent}
   </div>
   <div class="footer">
-    <p>© ${new Date().getFullYear()} Admin Portal. All rights reserved.</p>
+    <p>© ${new Date().getFullYear()} Drid Admin Portal. All rights reserved.</p>
   </div>
 </body>
 </html>
